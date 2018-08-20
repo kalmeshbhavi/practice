@@ -28,7 +28,7 @@ public class SnapshotGenerator {
 
     }
 
-    public boolean isRepositoryExist(Client client, String repositoryName) {
+    public boolean isRepositoryExist(String repositoryName) {
         boolean result = false;
         try {
             List<RepositoryMetaData> repositories = client.admin().cluster().prepareGetRepositories().get().repositories();
@@ -43,11 +43,10 @@ public class SnapshotGenerator {
         }
     }
 
-    public PutRepositoryResponse createRepository(Client client, String repositoryName,
-                                                  String path, boolean compress) {
+    public PutRepositoryResponse createRepository(String repositoryName, String path, boolean compress) {
         PutRepositoryResponse putRepositoryResponse = null;
         try {
-            if (!isRepositoryExist(client, repositoryName)) {
+            if (!isRepositoryExist(repositoryName)) {
                 Settings settings = Settings.builder()
                         .put("location", path + repositoryName)
                         .put("compress", compress).build();
@@ -64,8 +63,7 @@ public class SnapshotGenerator {
     }
 
 
-    public CreateSnapshotResponse createSnapshot(Client client, String repositoryName,
-                                                 String snapshotName) {
+    public CreateSnapshotResponse createSnapshot(String repositoryName, String snapshotName) {
         try {
             CreateSnapshotResponse createSnapshotResponse = client.admin().cluster()
                     .prepareCreateSnapshot(repositoryName, snapshotName)
@@ -79,7 +77,7 @@ public class SnapshotGenerator {
         return null;
     }
 
-    public boolean isSnapshotExist(Client client, String repositoryName, String snapshotName){
+    public boolean isSnapshotExist(String repositoryName, String snapshotName){
         boolean result = false;
         try {
             List<SnapshotInfo>
@@ -87,7 +85,7 @@ public class SnapshotGenerator {
                     snapshotInfos = client.admin().cluster().prepareGetSnapshots(repositoryName).get().getSnapshots();
             result = snapshotInfos.stream().filter(Objects::isNull)
                     .filter(snapshotInfo -> snapshotInfo.snapshotId() != null)
-                    .anyMatch(snapshotInfo -> snapshotInfo.equals(snapshotInfo.snapshotId().getName()));
+                    .anyMatch(snapshotInfo -> snapshotName.equals(snapshotInfo.snapshotId().getName()));
 
 
         } catch (Exception ex) {
