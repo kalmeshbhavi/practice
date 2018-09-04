@@ -3,6 +3,7 @@ package com.example.elasticsearch.client;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -17,11 +18,13 @@ import java.util.Objects;
 public class SnapshotGenerator {
 
     private Client client;
+    private RestHighLevelClient highLevelClient;
 
     SnapshotGenerator() {
         try {
             client = new PreBuiltTransportClient(Settings.EMPTY)
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("host1"), 9300));
+highLevelClient.
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -94,5 +97,4 @@ public class SnapshotGenerator {
             return result;
         }
     }
-
 }
